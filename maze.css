@@ -1,0 +1,12 @@
+.maze { margin-top: 14px; }
+.maze[hidden] { display: none; }
+
+#mazeCanvas {
+  display: block;
+  width: 100%;
+  max-width: 264px;
+  height: auto;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+.maze .hint { margin: 8px 0 0; font-size: .85rem; color: var(--muted); }

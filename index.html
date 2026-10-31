@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ТёмныйФефу — маркетплейс для своих</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="games.css">
+<link rel="stylesheet" href="maze.css">
+</head>
+<body>
+ 
+
+<header>
+  <h1>ТёмныйFefu<span class="cursor">_</span></h1>
+  <div class="wallet">Баланс: <span id="balance">0</span> зачёток</div>
+</header>
+ 
+<main>
+  <p id="status">Подключение через 14 прокси… ошибка: нет денег на балансе.</p>
+ 
+  <div class="filters">
+    <input id="search" type="text" placeholder="Поиск по товарам…">
+  </div>
+ 
+  <div class="layout">
+    <section class="grid" id="catalog"></section>
+ 
+    <aside>
+      <h2>Корзина</h2>
+      <div id="cart"></div>
+      <p>Итого: <span class="price" id="total">0</span> зачёток</p>
+      <button id="checkout">Оформить доставку</button>
+      <ul id="track"></ul>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <p class="footer-title">ТёмныйФефу<span class="cursor">_</span></p>
+  <p>Все зачётки вымышлены.</p>
+  <p>Сайт не использует cookies, только слёзы студентов.</p>
+  <p class="footer-links">
+    <a href="https://t.me/weqsvert" target="_blank" rel="noopener">Telegram</a> ·
+    <a href="https://github.com/weqsvert" target="_blank" rel="noopener">GitHub</a> ·
+    <span>Почта: ulikmulik2008@mail.ru</span>
+  </p>
+  <p class="tag">© 2026 · Макарова Ульяна, группа Б9125-01.03.02сп · Лабораторная работа</p>
+  <button id="reset" class="act">Сбросить прогресс</button>
+</footer>
+
+<script src="script.js"></script>
+<script src="games.js"></script>
+<script src="save.js"></script>
+<script src="maze.js"></script>
+ 
+</body>
+</html>
+ 
