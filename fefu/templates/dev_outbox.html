@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Исходящая почта{% endblock %}
+{% block content %}<h1>Исходящая почта</h1><p class="muted">Режим разработки: письма не уходят наружу, а лежат здесь (последние 30).</p>
+{% for m in rows %}<div class="panel"><div class="row row--between"><b>{{ m.subject }}</b><span class="muted small">{{ m.created_at|dt }} · кому: {{ m.to_addr }}</span></div><pre class="mail">{{ m.body }}</pre></div>
+{% else %}<div class="empty"><h3>Писем пока нет</h3><p>Запросите сброс пароля — письмо появится здесь.</p></div>{% endfor %}{% endblock %}

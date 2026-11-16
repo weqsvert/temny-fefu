@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% from "_m.html" import csrf, stars_line with context %}
+{% block content %}
+<section class="poster"><div><h1 class="poster__title">Есть всё. Кроме&nbsp;выхода.</h1>
+<p>Носок, Wi-Fi у окна, горячая вода на 30 секунд. Платите зачётками, ждите курьера. Курьер ждёт выхода.</p>
+<div class="row"><a class="btn btn--primary" href="#catalog">Смотреть товары</a>{% if not current_user %}<a class="btn" href="{{ url_for('auth.register') }}">Получить 400 зачёток</a>{% endif %}</div></div>
+<div class="poster__side">
+<a class="stage" href="{{ url_for('wallet.page') if current_user else url_for('auth.register') }}" aria-label="{{ 'Открыть кошелёк' if current_user else 'Зарегистрироваться и получить 400 зачёток' }}"><div class="book">
+<div class="book__front"><b class="book__title">Зачётная книжка</b><span class="book__seal">ФЕФУ</span><span class="book__name">{{ current_user.username if current_user else 'студент корпуса E' }}</span><span class="book__sum">{{ current_user.balance|num if current_user else '400' }} зач.</span></div>
+<div class="book__back"></div><div class="book__right"></div><div class="book__left"></div><div class="book__top"></div><div class="book__bottom"></div></div></a>
+<dl class="ledger" id="pulse" aria-label="Что происходит на рынке сейчас">
+<div><dt>Курьеров в пути</dt><dd data-pulse="ontheway">{{ pulse.ontheway }}</dd></div>
+<div><dt>Заказов за сутки</dt><dd data-pulse="today">{{ pulse.today }}</dd></div>
+<div><dt>Студентов на рынке</dt><dd data-pulse="users">{{ pulse.users }}</dd></div>
+<div><dt>Хит недели</dt><dd data-pulse="top">{{ pulse.top.name if pulse.top else '—' }}</dd></div></dl></div></section>
+<div class="catalog" id="catalog">
+<aside class="filters"><h2>Категории</h2><ul>
+  <li><a href="{{ url_for('shop.index', q=q or None, sort=sort) }}" {% if not cat %}aria-current="true"{% endif %}>Все</a></li>
+  {% for c in cats %}<li><a href="{{ url_for('shop.index', cat=c.category, q=q or None, sort=sort) }}" {% if cat == c.category %}aria-current="true"{% endif %}>{{ c.category }} <span class="count">{{ c.n }}</span></a></li>{% endfor %}</ul></aside>
+<section>
+<form class="toolbar" method="get"><p class="muted small">Найдено: {{ total }}{% if q %} по запросу «{{ q }}»{% endif %}</p>
+  <input type="hidden" name="q" value="{{ q }}"><input type="hidden" name="cat" value="{{ cat }}">
+  <label class="small">Сортировка <select name="sort" data-autosubmit>{% for k, v in sorts.items() %}<option value="{{ k }}" {{ 'selected' if k == sort }}>{{ v[0] }}</option>{% endfor %}</select></label>
+  <noscript><button class="btn btn--sm">Применить</button></noscript></form>
+{% if items %}<div class="grid-products">{% for p in items %}
+<article class="card {{ 'card--off' if p.stock == 0 }}"><div class="card__art art art-{{ p.id % 8 }}" aria-hidden="true">{{ p.icon }}</div><div class="card__top"><span class="card__cat">{{ p.category }}</span></div>
+  <h3 class="card__title"><a href="{{ url_for('shop.product', pid=p.id) }}">{{ p.name }}</a></h3>
+  <div class="card__meta">{{ stars_line(p.avg, p.n) }}</div>
+  <div class="card__foot"><span class="price">{{ p.price|num }}</span>
+  {% if p.stock == 0 %}<span class="badge badge--alert">нет в наличии</span>{% else %}
+  <form method="post" action="{{ url_for('shop.cart_add') }}" data-cart-add>{{ csrf() }}<input type="hidden" name="product_id" value="{{ p.id }}"><button class="btn btn--sm btn--primary">В корзину</button></form>{% endif %}</div>
+  {% if p.stock is not none and p.stock > 0 and p.stock < 4 %}<span class="badge badge--warn">осталось {{ p.stock }}</span>{% endif %}</article>{% endfor %}</div>
+{% if pages > 1 %}<nav class="pager" aria-label="Страницы">{% for n in range(1, pages + 1) %}{% if n == page %}<span aria-current="page">{{ n }}</span>{% else %}<a href="{{ page_url(n) }}">{{ n }}</a>{% endif %}{% endfor %}</nav>{% endif %}
+{% else %}<div class="empty"><h3>Ничего не нашлось</h3><p>Возможно, это унесло курьера.</p><a class="btn" href="{{ url_for('shop.index') }}">Сбросить фильтры</a></div>{% endif %}
+</section></div>{% endblock %}

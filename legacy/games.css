@@ -1,0 +1,50 @@
+.games { margin-top: 36px; }
+.games h2 { margin: 0 0 14px; font-size: 1.2rem; }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.game {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.game h3 { margin: 0; font-size: 1rem; }
+.hint { margin: 0; font-size: .85rem; color: var(--muted); }
+
+.act {
+  font: inherit; cursor: pointer; padding: 8px;
+  background: transparent; color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.act:hover { background: var(--accent); color: var(--bg); }
+
+#mine {
+  align-self: center;
+  width: 110px; height: 110px;
+  font-size: 3rem; cursor: pointer;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  transition: transform .08s;
+}
+#mine:active { transform: scale(.92); }
+#upgrades { display: flex; flex-direction: column; gap: 6px; }
+
+.bar { height: 12px; background: var(--bg); border: 1px solid var(--line); }
+#busBar { height: 100%; width: 0; background: var(--accent); transition: width .08s; }
+
+.reels { display: flex; justify-content: center; gap: 10px; font-size: 2.6rem; }
+.reels span {
+  width: 70px; text-align: center; padding: 6px 0;
+  background: var(--bg); border: 1px solid var(--line);
+}
+.game select {
+  font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--line); padding: 4px 8px; margin-left: 6px;
+}

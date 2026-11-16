@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% from "_m.html" import field, captcha_box, csrf with context %}{% block title %}Восстановление пароля{% endblock %}
+{% block content %}<div class="auth"><div class="auth__aside terminal"><p><b>$</b> recover --password</p><p>ссылка живёт 30 минут и срабатывает один раз.</p></div>
+<section class="auth__form panel"><h1>Забыли пароль?</h1>
+{% if sent %}<div class="flash flash--ok" role="status">Если такая почта есть в системе, мы отправили на неё ссылку для сброса. Проверьте письма (и «Спам»).</div>
+{% if dev_outbox %}<p class="small muted">Режим разработки: письмо лежит в <a href="{{ url_for('auth.dev_outbox') }}">исходящей почте</a>.</p>{% endif %}{% endif %}
+<form method="post" novalidate>{{ csrf() }}{{ field("email", "Почта аккаунта", "email", email, errors, "email") }}
+{{ captcha_box(captcha, errors) }}<button class="btn btn--primary btn--block">Отправить ссылку</button></form>
+<p class="auth__alt"><a href="{{ url_for('auth.login') }}">Вернуться ко входу</a></p></section></div>{% endblock %}

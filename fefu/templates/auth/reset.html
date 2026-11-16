@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% from "_m.html" import field, csrf with context %}{% block title %}Новый пароль{% endblock %}
+{% block content %}<div class="auth"><div class="auth__aside terminal"><p><b>$</b> passwd</p><p>после смены все прежние входы завершатся.</p></div>
+<section class="auth__form panel">
+{% if invalid %}<h1>Ссылка не работает</h1><p class="muted">Она устарела или уже использована.</p><a class="btn btn--primary" href="{{ url_for('auth.forgot') }}">Запросить новую</a>
+{% else %}<h1>Новый пароль для {{ username }}</h1>
+<form method="post" novalidate>{{ csrf() }}
+{{ field("password", "Новый пароль", "password", auto="new-password", errors=errors, meter=true) }}
+{{ field("password2", "Повторите пароль", "password", auto="new-password", errors=errors) }}
+<button class="btn btn--primary btn--block">Сохранить пароль</button></form>{% endif %}</section></div>{% endblock %}

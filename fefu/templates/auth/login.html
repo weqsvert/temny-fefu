@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% from "_m.html" import field, captcha_box, csrf with context %}{% block title %}Вход{% endblock %}
+{% block content %}<div class="auth">
+<div class="auth__aside terminal"><p><b>$</b> connect --proxies 14</p><p><i>error:</i> нет денег на балансе</p><p><b>$</b> whoami</p><p>студент, корпус E, выход не найден</p></div>
+<section class="auth__form panel"><h1>Вход</h1>
+{% if errors.form %}<div class="flash flash--error" role="alert">{{ errors.form }}</div>{% endif %}
+<form method="post" novalidate>{{ csrf() }}<input type="hidden" name="next" value="{{ next or '' }}">
+{{ field("identifier", "Имя пользователя или почта", value=identifier, auto="username", errors=errors) }}
+{{ field("password", "Пароль", "password", auto="current-password", errors=errors) }}
+{% if captcha %}{{ captcha_box(captcha, errors) }}{% endif %}
+<label class="check"><input type="checkbox" name="remember"> Запомнить меня на 14 дней</label>
+<button class="btn btn--primary btn--block">Войти</button></form>
+<p class="auth__alt"><a href="{{ url_for('auth.forgot') }}">Забыли пароль?</a> · <a href="{{ url_for('auth.register') }}">Создать аккаунт</a></p></section></div>{% endblock %}

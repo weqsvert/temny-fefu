@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Игры{% endblock %}
+{% block content %}<h1>Заработать зачётки</h1><p class="muted">Все расчёты — на сервере: накрутить клиентом не получится.</p>
+<div class="games" id="games" data-symbols='{{ symbols|tojson }}'>
+<section class="panel game"><h2>Майнинг зачёток</h2><p class="game__hint">+<span id="per-click">1</span> за клик, +<span id="per-sec">0</span> в секунду (копится не дольше часа).</p>
+<button class="mine-btn" id="mine" type="button" aria-label="Майнить зачётки">🎓</button><div class="upgrades" id="upgrades"></div></section>
+<section class="panel game"><h2>Успей на автобус</h2><p class="game__hint">Нажми «Протиснуться» {{ bus_goal }} раз за {{ bus_time }} секунд. Награда: {{ bus_reward }} зачёток.</p>
+<div class="bar"><div id="bus-bar"></div></div><div class="row"><button class="btn btn--primary" id="bus-start" type="button">Встать в очередь</button><button class="btn" id="bus-push" type="button" disabled>Протиснуться</button></div><p class="game__result" id="bus-result" aria-live="polite"></p></section>
+<section class="panel game"><h2>Казино «Последний автомат»</h2><p class="game__hint">Три одинаковых — ставка ×10, два — ставка возвращается, три черепа — ничего.</p>
+<div class="reels" id="reels" aria-live="polite">{% for i in range(3) %}<span>🎰</span>{% endfor %}</div>
+<div class="row"><label class="small">Ставка <select id="bet">{% for b in bets %}<option>{{ b }}</option>{% endfor %}</select></label><button class="btn btn--money" id="spin" type="button">Крутить</button></div><p class="game__result" id="spin-result" aria-live="polite"></p></section>
+</div>{% endblock %}

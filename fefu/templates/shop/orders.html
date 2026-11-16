@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}Мои заказы{% endblock %}
+{% block content %}<h1>Мои заказы</h1>
+{% if rows %}<div class="table-wrap"><table class="table"><thead><tr><th>№</th><th>Дата</th><th>Товаров</th><th>Статус</th><th class="num">Сумма</th></tr></thead><tbody>
+{% for o in rows %}<tr><td><a href="{{ url_for('shop.order', oid=o.id) }}">№{{ o.id }}</a></td><td>{{ o.created_at|dt }}</td><td>{{ o['items'] }}</td>
+<td>{% if o.status == 'delivered' %}<span class="badge badge--ok">доставлен</span>{% elif o.status == 'cancelled' %}<span class="badge badge--alert">отменён</span>{% else %}<span class="badge badge--warn">в пути</span>{% endif %}</td><td class="num">{{ o.total|num }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="empty"><h3>Заказов пока нет</h3><a class="btn btn--primary" href="{{ url_for('shop.index') }}">В каталог</a></div>{% endif %}{% endblock %}

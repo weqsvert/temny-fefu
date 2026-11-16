@@ -1,0 +1,31 @@
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}
+{% macro field(name, label, type="text", value="", errors={}, auto="", hint="", meter=false, prefix="") %}
+<div class="field{{ ' has-error' if errors.get(name) }}">
+  <label for="f-{{ prefix }}{{ name }}">{{ label }}</label>
+  {% if type == "password" %}<div class="pw-wrap">{% endif %}
+  <input id="f-{{ prefix }}{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ value }}" autocomplete="{{ auto }}" required{{ ' data-meter' if meter }}>
+  {% if type == "password" %}<button class="pw-toggle" type="button" data-pw>показать</button></div>{% endif %}
+  {% if meter %}<div class="meter" data-level="0"><span></span><span></span><span></span><span></span></div><p class="meter-label" aria-live="polite"></p>{% endif %}
+  {% if hint %}<p class="field__hint">{{ hint }}</p>{% endif %}
+  {% if errors.get(name) %}<p class="field__error">{{ errors[name] }}</p>{% endif %}
+</div>
+{% endmacro %}
+{% macro captcha_box(c, errors={}) %}
+<div class="captcha" data-captcha>
+  <input type="hidden" name="captcha_id" value="{{ c.id }}"><input type="hidden" name="captcha_kind" value="{{ c.kind }}">
+  <div class="captcha__row">
+    {% if c.kind == "image" %}<img src="{{ url_for('captcha.image', cid=c.id) }}" alt="Символы на картинке" width="230" height="76">
+    {% else %}<p class="captcha__prompt">{{ c.prompt }}</p>{% endif %}
+  </div>
+  <div class="field{{ ' has-error' if errors.get('captcha') }}">
+    <label for="f-captcha">{{ "Введите символы с картинки" if c.kind == "image" else "Ответ на вопрос" }}</label>
+    <input id="f-captcha" class="input" name="captcha_answer" autocomplete="off" required>
+    {% if errors.get('captcha') %}<p class="field__error">{{ errors['captcha'] }}</p>{% endif %}
+  </div>
+  <div class="captcha__tools">
+    <button class="link-btn" type="button" data-captcha-new="image">Новая картинка</button>
+    <button class="link-btn" type="button" data-captcha-new="question">Вопрос вместо картинки</button>
+  </div>
+</div>
+{% endmacro %}
+{% macro stars_line(avg, n) %}<span class="stars" aria-label="Оценка {{ '%.1f'|format(avg) }} из 5">{{ avg|stars }}</span> <span class="muted small">{% if n %}{{ '%.1f'|format(avg) }} · {{ n }} {{ n|pl('отзыв','отзыва','отзывов') }}{% else %}нет отзывов{% endif %}</span>{% endmacro %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% from "_m.html" import csrf with context %}{% block title %}Корзина{% endblock %}
+{% block content %}<h1>Корзина</h1>
+{% if rows %}<div class="cart"><div class="panel">{% for r in rows %}
+<div class="cart-row"><span class="cart-row__icon" aria-hidden="true">{{ r.icon }}</span>
+<a class="cart-row__name" href="{{ url_for('shop.product', pid=r.id) }}">{{ r.name }}</a>
+<form class="mini-form" method="post" action="{{ url_for('shop.cart_update') }}">{{ csrf() }}<input type="hidden" name="product_id" value="{{ r.id }}">
+<input class="input" type="number" name="qty" min="0" max="20" value="{{ r.qty }}" aria-label="Количество"><button class="btn btn--sm">Обновить</button></form>
+<span class="price">{{ (r.price * r.qty)|num }}</span></div>{% endfor %}</div>
+<aside class="panel summary"><dl><dt>Товаров</dt><dd>{{ rows|sum(attribute='qty') }}</dd><dt>Ваш баланс</dt><dd>{{ current_user.balance|num }}</dd><dt class="total">Итого</dt><dd class="total price">{{ total|num }}</dd></dl>
+{% if total > current_user.balance %}<p class="field__error">Не хватает {{ (total - current_user.balance)|money }}. <a href="{{ url_for('games.page') }}">Пополнить в играх</a></p>{% endif %}
+<form method="post" action="{{ url_for('shop.checkout') }}">{{ csrf() }}<div class="field"><label for="address">Адрес доставки</label><input class="input" id="address" name="address" value="Корпус E, нижние этажи" maxlength="200" required></div>
+<button class="btn btn--money btn--block" {{ 'disabled' if total > current_user.balance }}>Оформить доставку</button></form></aside></div>
+{% else %}<div class="empty"><h3>В корзине пусто</h3><p>Как и на балансе, если честно.</p><a class="btn btn--primary" href="{{ url_for('shop.index') }}">В каталог</a></div>{% endif %}{% endblock %}

@@ -1,0 +1,44 @@
+{% from "_m.html" import csrf with context %}<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a1422"><meta name="csrf" content="{{ csrf_token() }}">
+<title>{% block title %}Маркетплейс для своих{% endblock %} — ТёмныйФефу</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='skin.css') }}">
+<script src="{{ url_for('static', filename='app.js') }}" defer></script></head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+<header class="site-header"><div class="container header-inner">
+  <a class="brand" href="{{ url_for('shop.index') }}">ТёмныйФефу<span class="brand__cursor">_</span></a>
+  <form class="search" role="search" action="{{ url_for('shop.index') }}"><span class="search__prompt">&gt;</span>
+    <input type="search" name="q" value="{{ request.args.get('q', '') }}" placeholder="Поиск по товарам" aria-label="Поиск по товарам"></form>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Меню</button>
+  <nav class="nav" id="nav">
+    {% if current_user %}
+      <a href="{{ url_for('games.page') }}">Игры</a>
+      <a class="chip chip--money" href="{{ url_for('wallet.page') }}" title="Кошелёк: история, бонус, переводы"><span id="balance">{{ current_user.balance|num }}</span> зач.</a>
+      <a class="chip" href="{{ url_for('shop.cart') }}">Корзина <span class="chip__count" {{ 'hidden' if not cart_count }}>{{ cart_count }}</span></a>
+      <details class="user-menu"><summary>{{ current_user.username }}</summary><div class="user-menu__list">
+        <a href="{{ url_for('account.profile') }}">Профиль</a><a href="{{ url_for('shop.orders') }}">Мои заказы</a><a href="{{ url_for('sell.index') }}">Продажи</a>
+        {% if current_user.role == 'admin' %}<a href="{{ url_for('admin.index') }}">Админ-панель</a><a href="{{ url_for('sell.admin_list') }}">Модерация товаров</a>{% endif %}<hr>
+        <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button>Выйти</button></form></div></details>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}">Войти</a><a class="btn btn--primary btn--sm" href="{{ url_for('auth.register') }}">Регистрация</a>
+    {% endif %}
+  </nav>
+</div></header>
+<div class="feed" aria-label="Системные сообщения"><div class="ticker" data-messages='{{ system_messages|tojson }}'><div class="ticker__track">{% for i in (1, 2) %}{% for m in system_messages %}<span {{ 'aria-hidden="true"' if i == 2 }}>{{ m }}</span>{% endfor %}{% endfor %}</div></div></div>
+<main id="main"><div class="container">
+  {% with msgs = get_flashed_messages(with_categories=true) %}{% if msgs %}<div class="flash-stack">
+    {% for cat, m in msgs %}<div class="flash flash--{{ cat }}" role="status"><span>{{ m }}</span><button type="button" aria-label="Закрыть" data-close>×</button></div>{% endfor %}
+  </div>{% endif %}{% endwith %}
+  {% block content %}{% endblock %}
+</div></main>
+<footer class="site-footer"><div class="container">
+  <p class="footer-title">ТёмныйФефу<span class="brand__cursor">_</span></p>
+  <p>Все зачётки вымышлены. Сайт использует одну cookie — для входа, а слёзы студентов — по желанию.</p>
+  {% if dev_outbox %}<p><a href="{{ url_for('auth.dev_outbox') }}">Исходящая почта (режим разработки)</a></p>{% endif %}
+  <p>© 2026 · Макарова Ульяна, Пономарев Иван · группа Б9125-01.03.02сп</p>
+  <p class="small"><button class="link-btn" id="hack-toggle" type="button" aria-pressed="false">Режим взлома: выкл</button> · Горячие клавиши: <kbd>/</kbd> — поиск</p>
+</div></footer>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+</body></html>

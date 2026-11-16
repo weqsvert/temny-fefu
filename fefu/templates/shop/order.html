@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% from "_m.html" import csrf with context %}{% block title %}Заказ №{{ o.id }}{% endblock %}
+{% block content %}<div class="order-head"><div><h1>Заказ №{{ o.id }}</h1><p class="muted">{{ o.created_at|dt }} · {{ o.address }}</p></div>
+<div class="row"><span class="price">{{ o.total|money }}</span>
+{% if o.status == 'delivering' %}<form method="post" action="{{ url_for('shop.order_cancel', oid=o.id) }}" data-confirm="Отменить заказ? Зачётки вернутся на баланс.">{{ csrf() }}<button class="btn btn--danger btn--sm">Отменить</button></form>{% endif %}
+<form method="post" action="{{ url_for('shop.order_repeat', oid=o.id) }}">{{ csrf() }}<button class="btn btn--sm">Повторить заказ</button></form></div></div>
+<div class="order-grid"><section class="panel" {% if live %}data-live="{{ live }}"{% endif %}><h2>Где курьер</h2>
+{% if o.status == 'cancelled' %}<p class="muted">Заказ отменён, зачётки вернулись на баланс.</p>{% else %}<ol class="track">
+{% for s in track %}<li class="{{ 'is-done' if loop.index0 <= idx }} {{ 'is-current' if loop.index0 == idx and live }}">{{ s }}</li>{% endfor %}</ol>{% endif %}</section>
+<section class="panel"><h2>Состав заказа</h2><div class="table-wrap"><table class="table"><tbody>
+{% for i in items %}<tr><td>{{ i.icon }} {{ i.name }}</td><td class="num">{{ i.qty }} × {{ i.price|num }}</td></tr>{% endfor %}</tbody></table></div></section></div>{% endblock %}

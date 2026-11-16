@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% from "_m.html" import csrf with context %}{% block title %}Админ-панель{% endblock %}
+{% block content %}<div class="row row--between"><h1>Админ-панель</h1><a class="btn btn--primary" href="{{ url_for('sell.admin_list') }}">Товары и модерация</a></div>
+<div class="stat-grid"><div class="stat"><b>{{ stats.users }}</b><span>пользователей</span></div><div class="stat"><b>{{ stats.orders }}</b><span>заказов</span></div><div class="stat"><b>{{ stats.coins|num }}</b><span>зачёток в обороте</span></div></div>
+<h2>Пользователи</h2><div class="table-wrap"><table class="table"><thead><tr><th>Имя</th><th>Почта</th><th>Роль</th><th class="num">Баланс</th><th>Статус</th><th>Действия</th></tr></thead><tbody>
+{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td class="num">{{ u.balance|num }}</td>
+<td>{% if u.is_active %}<span class="badge badge--ok">активен</span>{% else %}<span class="badge badge--alert">заблокирован</span>{% endif %}</td>
+<td><div class="mini-form"><form class="mini-form" method="post" action="{{ url_for('admin.balance', uid=u.id) }}">{{ csrf() }}<input class="input" type="number" name="amount" placeholder="±зачётки" aria-label="Изменить баланс" required><button class="btn btn--sm">Ок</button></form>
+{% if u.id != current_user.id %}<form class="inline" method="post" action="{{ url_for('admin.toggle', uid=u.id) }}">{{ csrf() }}<button class="btn btn--sm btn--danger">{{ 'Блок' if u.is_active else 'Разблок' }}</button></form>{% endif %}</div></td></tr>{% endfor %}</tbody></table></div>
+<h2>Журнал событий</h2><div class="table-wrap"><table class="table"><thead><tr><th>Время</th><th>Событие</th><th>Пользователь</th><th>IP</th><th>Детали</th></tr></thead><tbody>
+{% for e in events %}<tr><td class="nowrap">{{ e.ts|dt }}</td><td>{{ e.event }}</td><td>{{ e.username or '—' }}</td><td>{{ e.ip or '—' }}</td><td>{{ e.details }}</td></tr>{% endfor %}</tbody></table></div>{% endblock %}

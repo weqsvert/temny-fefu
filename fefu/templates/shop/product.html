@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% from "_m.html" import csrf, stars_line with context %}{% block title %}{{ p.name }}{% endblock %}
+{% block content %}
+<p class="crumbs"><a href="{{ url_for('shop.index') }}">Каталог</a> / <a href="{{ url_for('shop.index', cat=p.category) }}">{{ p.category }}</a></p>
+<div class="product"><div class="product__art art art-{{ p.id % 8 }}" aria-hidden="true">{{ p.icon }}</div><div>
+<h1>{{ p.name }}</h1><p class="muted small">Продавец: {{ seller or 'ТёмныйФефу' }}</p><p>{{ stars_line(p.avg, p.n) }}</p><p>{{ p.description }}</p>
+<div class="product__buy"><span class="product__price">{{ p.price|money }}</span>
+{% if p.stock == 0 %}<span class="badge badge--alert">нет в наличии</span>{% else %}
+<form class="row" method="post" action="{{ url_for('shop.cart_add') }}" data-cart-add>{{ csrf() }}<input type="hidden" name="product_id" value="{{ p.id }}">
+<div class="qty"><button type="button" data-qty="-1" aria-label="Меньше">−</button><input name="qty" value="1" inputmode="numeric" aria-label="Количество"><button type="button" data-qty="1" aria-label="Больше">+</button></div>
+<button class="btn btn--primary">В корзину</button></form>{% endif %}</div>
+{% if p.stock is not none and p.stock > 0 %}<p class="muted small">В наличии: {{ p.stock }}</p>{% endif %}</div></div>
+<section class="panel" id="reviews"><h2>Отзывы</h2>
+{% if current_user and not reviewed %}<form method="post" action="{{ url_for('shop.review', pid=p.id) }}">{{ csrf() }}
+<fieldset class="star-input"><legend class="visually-hidden">Оценка</legend>
+{% for n in (5, 4, 3, 2, 1) %}<input type="radio" id="st{{ n }}" name="rating" value="{{ n }}" required><label for="st{{ n }}" title="{{ n }}">★</label>{% endfor %}</fieldset>
+<div class="field"><label for="body">Ваш отзыв</label><textarea id="body" name="body" minlength="5" maxlength="500" required></textarea></div>
+<button class="btn">Опубликовать</button></form>
+{% elif not current_user %}<p class="muted"><a href="{{ url_for('auth.login', next=request.path) }}">Войдите</a>, чтобы оставить отзыв.</p>{% endif %}
+{% for r in reviews %}<div class="review" id="r{{ r.id }}"><div class="review__head"><b>{{ r.author }}</b>
+{% if r.bought %}<span class="badge badge--ok">купил этот товар</span>{% endif %}<span class="stars">{{ r.rating|stars }}</span><span class="muted small">{{ r.created_at|dt('%d.%m.%Y') }}</span></div>
+<p class="review__body">{{ r.body }}</p>
+<div class="review__actions">
+{% if current_user and r.user_id != current_user.id %}<form class="inline" method="post" action="{{ url_for('shop.review_helpful', rid=r.id) }}">{{ csrf() }}<button class="btn btn--sm btn--ghost" aria-pressed="{{ 'true' if r.voted else 'false' }}">👍 Полезно · {{ r.votes }}</button></form>
+{% else %}<span class="muted small">👍 {{ r.votes }}</span>{% endif %}
+{% if current_user and r.user_id == current_user.id %}
+<details class="inline-edit"><summary class="link-btn">Изменить</summary><form method="post" action="{{ url_for('shop.review_edit', rid=r.id) }}">{{ csrf() }}
+<div class="field"><label for="rt{{ r.id }}">Оценка</label><select id="rt{{ r.id }}" name="rating">{% for n in (5, 4, 3, 2, 1) %}<option value="{{ n }}" {{ 'selected' if n == r.rating }}>{{ n }}</option>{% endfor %}</select></div>
+<div class="field"><textarea name="body" minlength="5" maxlength="500" aria-label="Текст отзыва" required>{{ r.body }}</textarea></div><button class="btn btn--sm">Сохранить</button></form></details>
+<form class="inline" method="post" action="{{ url_for('shop.review_delete', rid=r.id) }}" data-confirm="Удалить отзыв?">{{ csrf() }}<button class="link-btn">Удалить</button></form>{% endif %}
+</div></div>
+{% else %}<p class="muted">Отзывов пока нет. Станьте первым.</p>{% endfor %}</section>{% endblock %}

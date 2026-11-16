@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% from "_m.html" import csrf with context %}{% block title %}{{ 'Изменить товар' if editing else 'Новый товар' }}{% endblock %}
+{% block content %}<section class="panel"><h1>{{ 'Изменить товар' if editing else 'Новый товар' }}</h1>
+{% if error %}<div class="flash flash--error" role="alert">{{ error }}</div>{% endif %}
+<form method="post" class="form-grid">{{ csrf() }}
+<div class="field span-2"><label for="name">Название</label><input type="text" id="name" name="name" value="{{ form.name }}" maxlength="80" required></div>
+<div class="field"><label for="icon">Иконка (эмодзи)</label><input type="text" id="icon" name="icon" value="{{ form.icon }}" maxlength="8"></div>
+<div class="field"><label for="category">Категория</label><input type="text" id="category" name="category" value="{{ form.category }}" list="cats" maxlength="30" required><datalist id="cats">{% for c in cats %}<option value="{{ c }}">{% endfor %}</datalist></div>
+<div class="field"><label for="price">Цена, зачёток</label><input type="number" id="price" name="price" value="{{ form.price }}" min="1" max="1000000" required></div>
+<div class="field"><label for="stock">Остаток</label><input type="number" id="stock" name="stock" value="{{ form.stock }}" min="0" max="9999"><p class="field__hint">Пусто — без ограничений.</p></div>
+<div class="field span-2"><label for="description">Описание</label><textarea id="description" name="description" maxlength="300">{{ form.description }}</textarea></div>
+<div class="span-2 row"><button class="btn btn--primary">Сохранить</button><a class="btn" href="{{ url_for('sell.index') }}">Отмена</a>{% if current_user.role != 'admin' %}<span class="muted small">После сохранения товар уйдёт на проверку.</span>{% endif %}</div></form></section>{% endblock %}

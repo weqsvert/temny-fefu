@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% from "_m.html" import field, captcha_box, csrf with context %}{% block title %}Регистрация{% endblock %}
+{% block content %}<div class="auth">
+<div class="auth__aside terminal"><p><b>$</b> register --student</p><p>приветственный бонус: <b>400 зачёток</b></p><p>Хватит на носок, пароль и немного надежды.</p></div>
+<section class="auth__form panel"><h1>Регистрация</h1>
+<form method="post" novalidate>{{ csrf() }}
+{{ field("username", "Имя пользователя", value=form.username, auto="username", errors=errors, hint="3–24 символа: буквы, цифры, точка, дефис, подчёркивание.") }}
+{{ field("email", "Почта", "email", form.email, errors, "email", "Нужна для восстановления пароля.") }}
+{{ field("password", "Пароль", "password", auto="new-password", errors=errors, meter=true, hint="От 8 символов, буквы и цифры.") }}
+{{ field("password2", "Повторите пароль", "password", auto="new-password", errors=errors) }}
+{{ captcha_box(captcha, errors) }}
+<label class="check"><input type="checkbox" name="accept"><span>Я понимаю, что зачётки вымышлены, а курьер может не дойти.</span></label>
+{% if errors.accept %}<p class="field__error">{{ errors.accept }}</p>{% endif %}
+<button class="btn btn--primary btn--block">Создать аккаунт</button></form>
+<p class="auth__alt">Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войти</a></p></section></div>{% endblock %}

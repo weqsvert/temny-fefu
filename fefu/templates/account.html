@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% from "_m.html" import field, csrf with context %}{% block title %}Профиль{% endblock %}
+{% block content %}<h1>{{ current_user.username }}</h1>
+<div class="stat-grid"><div class="stat"><b class="price">{{ current_user.balance|num }}</b><span>зачёток на балансе</span></div>
+<div class="stat"><b>{{ stats.orders }}</b><span>заказов</span></div><div class="stat"><b>{{ stats.spent|num }}</b><span>потрачено</span></div>
+<div class="stat"><b class="small">{{ current_user.created_at|dt('%d.%m.%Y') }}</b><span>с нами с</span></div></div>
+<div class="account-grid">
+<section class="panel" id="password"><h2>Смена пароля</h2><form method="post" action="{{ url_for('account.change_password') }}">{{ csrf() }}
+{{ field("current_password", "Текущий пароль", "password", auto="current-password", prefix="pw-") }}
+{{ field("new_password", "Новый пароль", "password", auto="new-password", meter=true) }}
+{{ field("new_password2", "Повторите новый пароль", "password", auto="new-password") }}
+<button class="btn btn--primary">Сменить пароль</button></form></section>
+<section class="panel" id="email"><h2>Почта</h2><p class="muted small">Сейчас: {{ current_user.email }}</p><form method="post" action="{{ url_for('account.change_email') }}">{{ csrf() }}
+{{ field("current_password", "Текущий пароль", "password", auto="current-password", prefix="em-") }}
+{{ field("email", "Новая почта", "email", auto="email") }}<button class="btn">Сменить почту</button></form></section>
+<section class="panel" id="sessions"><h2>Сессии</h2><p class="muted small">Завершит вход на всех других устройствах. Текущий останется.</p>
+<form method="post" action="{{ url_for('account.logout_everywhere') }}">{{ csrf() }}<button class="btn">Выйти на других устройствах</button></form>
+<h3>Журнал безопасности</h3><ul class="events">{% for e in events %}<li><span>{{ event_labels.get(e.event, e.event) }}</span><span class="when">{{ e.ts|dt }} · {{ e.ip or '—' }}</span></li>{% else %}<li class="muted">Пусто</li>{% endfor %}</ul></section>
+<section class="panel"><h2>Движение зачёток</h2><ul class="events">{% for t in history %}<li><span>{{ kind_labels.get(t.kind, t.kind) }}{% if t.note %} <span class="muted small">· {{ t.note }}</span>{% endif %}</span>
+<span class="when {{ 'pos' if t.amount > 0 else 'neg' }}">{{ t.amount|signed }} · {{ t.created_at|dt }}</span></li>{% else %}<li class="muted">Операций нет</li>{% endfor %}</ul></section>
+<section class="panel panel--danger" id="danger"><h2>Удаление аккаунта</h2><p class="muted small">Баланс сгорит, заказы удалятся. Это нельзя отменить.</p>
+<form method="post" action="{{ url_for('account.delete_account') }}">{{ csrf() }}
+{{ field("current_password", "Текущий пароль", "password", auto="current-password", prefix="del-") }}
+{{ field("confirm", "Напишите «удалить» для подтверждения", prefix="del-") }}<button class="btn btn--danger">Удалить аккаунт</button></form></section>
+</div>{% endblock %}

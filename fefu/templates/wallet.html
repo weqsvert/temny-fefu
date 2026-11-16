@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% from "_m.html" import csrf with context %}{% block title %}Кошелёк{% endblock %}
+{% block content %}<h1>Кошелёк</h1>
+<div class="wallet">
+<section class="panel"><p class="muted small">На балансе</p><p class="wallet__sum">{{ current_user.balance|money }}</p>
+<p class="muted small">Потрачено на заказы: {{ spent|num }}. Заработано играми, бонусами и продажами: {{ earned|num }}.</p>
+<a class="btn" href="{{ url_for('games.page') }}">Заработать в играх</a></section>
+<section class="panel"><h2>Ежедневный бонус</h2>
+<div class="streak" role="img" aria-label="Серия: {{ d.streak }} из 7">{% for i in range(1, 8) %}<span class="streak__dot {{ 'is-on' if i <= d.streak }}">{{ i }}</span>{% endfor %}</div>
+{% if d.ready %}<form method="post" action="{{ url_for('wallet.daily') }}">{{ csrf() }}<button class="btn btn--money">Забрать {{ d.reward }} зачёток</button></form>
+{% else %}<p>Следующий бонус через {{ wait }}.</p>{% endif %}
+<p class="muted small">Заходите каждый день: награда растёт до 7-го дня. Пропуск дня сбрасывает серию.</p></section>
+<section class="panel"><h2>Перевод студенту</h2><form method="post" action="{{ url_for('wallet.send') }}">{{ csrf() }}
+<div class="field"><label for="to">Имя пользователя</label><input class="input" id="to" name="to" autocomplete="off" required></div>
+<div class="field"><label for="amount">Сколько зачёток</label><input class="input" type="number" id="amount" name="amount" min="1" max="1000" required><p class="field__hint">До 1000 за раз, без комиссии.</p></div>
+<button class="btn btn--primary">Перевести</button></form></section></div>
+<h2>История операций</h2>
+{% if history %}<div class="table-wrap"><table class="table"><thead><tr><th>Когда</th><th>Операция</th><th class="num">Сумма</th><th class="num">Баланс</th></tr></thead><tbody>
+{% for t in history %}<tr><td class="nowrap">{{ t.created_at|dt }}</td><td>{{ kind_labels.get(t.kind, t.kind) }}{% if t.note %} <span class="muted small">· {{ t.note }}</span>{% endif %}</td>
+<td class="num {{ 'pos' if t.amount > 0 else 'neg' }}">{{ t.amount|signed }}</td><td class="num">{{ t.balance_after|num }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="empty"><h3>Операций пока нет</h3></div>{% endif %}{% endblock %}

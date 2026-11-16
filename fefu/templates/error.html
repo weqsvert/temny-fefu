@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}{{ title }}{% endblock %}
+{% block content %}<section class="error-page"><div class="error-page__code">{{ code }}</div>
+<div class="terminal console"><p><b>$</b> open {{ request.path }}</p><p><i>error {{ code }}:</i> {{ title }}</p><p>{{ text }}</p><p><b>$</b> <span class="brand__cursor">_</span></p></div>
+<a class="btn btn--primary" href="{{ url_for('shop.index') }}">В каталог</a></section>{% endblock %}

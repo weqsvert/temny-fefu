@@ -1,0 +1,94 @@
+/* Обложка зачётки: тёмно-синяя основа, золотое тиснение для денег, печати для действий. Подключается после app.css. */
+:root {
+  --ink: #0a1422; --panel: #101e31; --raised: #17283f; --line: #2b4161; --line-soft: #12213a;
+  --text: #f0e9d6; --muted: #9fb0c8; --money: #e8b84a; --signal: #9b8cff; --signal-strong: #7f6cf5;
+  --alert: #ff5a4a; --warn: #ffa94d; --radius: 3px;
+  --display: Impact, Haettenschweiler, "Arial Narrow Bold", "Roboto Condensed", system-ui, sans-serif;
+}
+::selection { background: var(--money); color: #1b1304; }
+h1, h2 { font-family: var(--display); font-weight: 400; letter-spacing: .015em; }
+h1 { font-size: clamp(2rem, 1.2rem + 3vw, 3.4rem); }
+.brand { font: 400 1.6rem/1 var(--display); background: var(--money); color: #1b1304; padding: .2rem .55rem; transform: rotate(-2deg); letter-spacing: .02em; }
+.brand:hover, .brand__cursor { color: #1b1304; }
+.chip, .user-menu summary, .badge { border-radius: 3px; }
+.chip__count { color: var(--ink); }
+.btn { border-width: 2px; }
+.btn--primary { background: var(--text); border-color: var(--text); color: var(--ink); }
+.btn--primary:hover { background: var(--money); border-color: var(--money); color: #1b1304; }
+.panel, .stat, .filters { border-width: 2px; }
+.auth__form { border-top: 6px solid var(--money); }
+.terminal { border-left: 4px solid var(--signal); }
+.footer-title { font: 400 1.7rem var(--display); }
+
+/* бегущая строка: настоящие покупки и системные сообщения */
+.feed { background: var(--money); color: #1b1304; border-bottom: 2px solid var(--ink); overflow: hidden; font: 600 .85rem var(--mono); }
+.ticker { overflow: hidden; }
+.ticker__track { display: flex; gap: 2.5rem; padding: .35rem 2.5rem .35rem 0; width: max-content; animation: tick 70s linear infinite; }
+.ticker__track span { white-space: nowrap; }
+.ticker__track span::before { content: "■"; margin-right: 2.5rem; font-size: .6em; vertical-align: .15em; }
+.feed:hover .ticker__track { animation-play-state: paused; }
+@keyframes tick { to { transform: translateX(-50%); } }
+
+/* главная: плакат и ведомость */
+.poster { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(290px, 1fr); gap: 2.2rem; align-items: end; margin-bottom: 2.2rem; padding-bottom: 1.8rem; border-bottom: 2px solid var(--line); }
+@media (max-width: 860px) { .poster { grid-template-columns: 1fr; } }
+.poster__title { font: 400 clamp(3rem, 1rem + 9vw, 7rem)/.92 var(--display); letter-spacing: .01em; margin: 0 0 1rem; animation: stamp .55s cubic-bezier(.2, 1.4, .4, 1) both; }
+@keyframes stamp { from { opacity: 0; transform: scale(1.18) rotate(-2deg); } }
+.poster p { color: var(--muted); max-width: 52ch; }
+.ledger { margin: 0; padding: 1.1rem 1.25rem; background: var(--text); color: #1b1a14; border-radius: 2px; font: .9rem/1.9 var(--mono); transform: rotate(1.2deg); box-shadow: 6px 6px 0 var(--money); }
+.ledger div { display: flex; align-items: baseline; gap: .5rem; }
+.ledger dt { flex: 1; display: flex; gap: .4rem; }
+.ledger dt::after { content: ""; flex: 1; border-bottom: 2px dotted #1b1a1477; transform: translateY(-4px); }
+.ledger dd { margin: 0; font-weight: 700; max-width: 52%; text-align: right; }
+.is-new { animation: flash 1s; }
+@keyframes flash { from { background: var(--money); } }
+
+/* карточки: жёсткая тень вместо мягкой */
+.card { border: 2px solid var(--line); background: var(--panel); transition: transform .12s, box-shadow .12s; }
+.card:hover, .card:focus-within { border-color: var(--text); transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--money); }
+.card__foot .price, .product__price { background: var(--money); color: #1b1304; padding: .05rem .5rem; border-radius: 2px; font-family: var(--display); font-size: 1.25rem; letter-spacing: .02em; }
+.product__price { font-size: 2rem; }
+.art { --a: var(--money); background: radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--a) 50%, transparent), transparent 62%), repeating-linear-gradient(135deg, var(--panel) 0 7px, var(--raised) 7px 14px); }
+.art-0 { --a: #9b8cff; } .art-1 { --a: #ff5a4a; } .art-2 { --a: #e8b84a; } .art-3 { --a: #5ad1b5; }
+.art-4 { --a: #6fb1ff; } .art-5 { --a: #ff8fc4; } .art-6 { --a: #ffa94d; } .art-7 { --a: #c5e86c; }
+
+/* ───────── объём: зачётная книжка, наклон карточек, плавные переходы ───────── */
+@view-transition { navigation: auto; }
+::view-transition-group(root) { animation-duration: .25s; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+.poster { grid-template-columns: minmax(0, 1.15fr) minmax(300px, 1fr); align-items: center; }
+.poster__title { font-size: clamp(2.6rem, .8rem + 7vw, 6rem); }
+.poster__side { display: grid; gap: 1.2rem; }
+.stage { position: relative; display: grid; place-items: center; height: 340px; perspective: 1100px; cursor: pointer; }
+.stage::after { content: ""; position: absolute; bottom: 12px; width: 190px; height: 22px; background: radial-gradient(#000b, transparent 70%); }
+.book { --w: 210px; --h: 290px; --d: 38px; position: relative; width: var(--w); height: var(--h); transform-style: preserve-3d;
+  transform: rotateX(var(--rx, -10deg)) rotateY(var(--ry, -28deg)); }
+.book > * { position: absolute; backface-visibility: hidden; }
+.book__front, .book__back { inset: 0; background: linear-gradient(145deg, #1f3f6b, #0e2038); box-shadow: inset 0 0 0 6px #0e2038, inset 0 0 0 8px var(--money); }
+.book__front { transform: translateZ(calc(var(--d) / 2)); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 1.5rem 1rem; text-align: center; }
+.book__back { transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); }
+.book__title { font: 400 1.7rem/1 var(--display); color: var(--money); letter-spacing: .03em; }
+.book__seal { display: grid; place-items: center; width: 70px; height: 70px; border: 2px solid var(--money); border-radius: 50%; color: var(--money); font: 400 1.1rem var(--display); box-shadow: 0 0 0 4px #0e2038, 0 0 0 5px var(--money); }
+.book__name { font: .85rem var(--mono); color: var(--text); overflow-wrap: anywhere; }
+.book__sum { font: 400 1.5rem var(--display); color: var(--money); }
+.book__right, .book__left { width: var(--d); height: 100%; left: calc(50% - var(--d) / 2); }
+.book__right { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); background: repeating-linear-gradient(90deg, #f0e9d6 0 2px, #cfc6aa 2px 3px); }
+.book__left { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); background: linear-gradient(90deg, #0b1a30, #1f3f6b); }
+.book__top, .book__bottom { width: 100%; height: var(--d); top: calc(50% - var(--d) / 2); background: repeating-linear-gradient(0deg, #f0e9d6 0 2px, #cfc6aa 2px 3px); }
+.book__top { transform: rotateX(90deg) translateZ(calc(var(--h) / 2)); }
+.book__bottom { transform: rotateX(-90deg) translateZ(calc(var(--h) / 2)); }
+.card { transform-style: preserve-3d; position: relative; }
+.card:hover, .card:focus-within { transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate(-3px, -3px); }
+.card__art { transition: transform .15s; }
+.card:hover .card__art { transform: translateZ(26px); }
+.card::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .2s;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .13), transparent 55%); }
+.card:hover::before { opacity: 1; }
+.panel h3 { margin-top: 1.4rem; }
+.wallet { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.8rem; align-items: start; }
+.wallet .panel + .panel { margin-top: 0; }
+.wallet__sum { font: 400 clamp(2rem, 1.2rem + 3vw, 3rem)/1 var(--display); color: var(--money); margin: .2rem 0 .8rem; }
+.streak { display: flex; gap: .4rem; margin: .8rem 0 1rem; flex-wrap: wrap; }
+.streak__dot { width: 2.1rem; height: 2.1rem; display: grid; place-items: center; border: 2px solid var(--line); border-radius: 50%; font: .8rem var(--mono); color: var(--muted); }
+.streak__dot.is-on { background: var(--money); border-color: var(--money); color: #1b1304; }
+@media (max-width: 860px) { .stage { height: 300px; } }
